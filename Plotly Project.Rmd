@@ -1,0 +1,68 @@
+---
+title: "Scatter and 3D plots with Plotly pacakge"
+author: "Aijun Zhang"
+date: "2023-05-29"
+output: html_document
+---
+
+## Introduction
+Create a web page presentation using R Markdown that features a plot created with Plotly. 
+Using the **"mtcars"** dataset. The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).
+
+## Plotly plot
+
+### Load library and dataset
+```{r library, message=F}
+library(plotly)
+```
+
+### Load the dataset and preprocess
+```{r data and preprocess}
+df <- mtcars
+df <- within(df, {
+  vs <- factor(vs, labels = c("V", "S"))
+  am <- factor(am, labels = c("automatic", "manual"))
+  cyl  <- ordered(cyl)
+  gear <- ordered(gear)
+  carb <- ordered(carb)
+})
+```
+
+### Plot the interactive plot with plotly
+it shows the relation between miles/gallon(mpg), 1/4 mile tiem(qsec) between different transmission auto and manual(am) which in the category of carburetor numbers(carb).
+```{r scatter, , warning=F}
+fig <- df %>%
+  plot_ly(
+    x = ~qsec,
+    y = ~mpg,
+    size = ~hp,
+    color = ~am,
+    colors = c("red","black"),
+    frame = ~carb,
+    text = ~mpg,
+    hoverinfo = "text",
+    type = 'scatter',
+    mode = 'markers'
+  )
+fig <- fig %>% layout(
+  xaxis = list(
+    type = "log"
+  )
+)
+
+fig
+```
+
+### 3D plot with plotly
+```{r 3d}
+fig1 <- plot_ly(df, x = ~mpg, y = ~hp, z = ~wt, type = 'scatter3d', mode = 'lines+markers',
+              line = list(width = 10, color = ~gear, reverscale = FALSE))
+
+fig1
+```
+
+
+Plotly’s R graphing library makes interactive, publication-quality graphs. It can be used to make a variety of graphics includeing: line plots, scatter plots, area charts, bar charts, error bars, box plots, histograms, heatmaps, subplots, multiple-axes, and 3D (WebGL based) charts.
+
+
+-End-
